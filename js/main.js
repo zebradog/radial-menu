@@ -1,7 +1,6 @@
 var mainMenu = new radialMenu({
   x: 400,
-  y: 300,
-  "start-radius":100
+  y: 300
 });
 
 // FIRST LEVEL ITEMS
@@ -95,7 +94,7 @@ window.addEventListener("click", function (e) {
   var x = e.pageX,
     y = e.pageY;
 
-  if (!opened) {
+  if (!mainMenu.isOpened) {
     mainMenu.update({
       x: e.pageX,
       y: e.pageY
@@ -120,7 +119,7 @@ link_close.addEventListener("click", function (e) {
 
   setTimeout(function () {
     element.transform("0");
-  }, 1000);
+  }, 500);
 
   mainMenu.close();
   opened = false;

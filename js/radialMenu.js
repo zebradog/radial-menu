@@ -199,7 +199,7 @@
       this.defs = [];
 
       // if opened
-      this.action_flag = false;
+      this.isOpened = false;
     },
 
     /** finding new radiuses. Default - +50px */
@@ -239,17 +239,17 @@
     open: function () {
       var self = this;
 
-      if (!this.action_flag) {
+      if (!this.isOpened) {
         if (!this.parent) {
           this.buildSvg();
           this.buildChildren();
         } else {
           this.parent.childs.forEach(function (el) {
-            if (el.action_flag){
+            if (el.isOpened){
               el.closeChildren();
             }
           });
-          if (!this.parent.action_flag) {    
+          if (!this.parent.isOpened) {    
             this.parent.open();
           }
           
@@ -283,7 +283,7 @@
         custom = checkSize(this.childs);
 
       // add flag means menu is opened
-      this.action_flag = true;
+      this.isOpened = true;
       // Calculating radiuses before children builds
       this.calculateRadiuses();
       // building points for drawing
@@ -318,7 +318,7 @@
             if (self.childs[i].options.onclick) {
               self.childs[i].options.onclick();
             }
-            if (!self.childs[i].action_flag) {
+            if (!self.childs[i].isOpened) {
               self.childs[i].open(i);
             }
           }));
@@ -380,7 +380,7 @@
         this.circles = [];
         this.texts = [];
         this.defs = [];
-        this.action_flag = false;
+        this.isOpened = false;
         this.closeAllChildren();
       }
     },
@@ -391,7 +391,7 @@
       this.circles = [];
       this.texts = [];
       this.defs = [];
-      this.action_flag = false;
+      this.isOpened = false;
       this.s.remove();
     },
 
@@ -519,7 +519,7 @@
     this.g;
 
     // action flag
-    this.action_flag = false;
+    this.isOpened = false;
   };
 
   myMenuItem.prototype = radialMenu.prototype;
