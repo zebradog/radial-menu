@@ -300,12 +300,13 @@
             point2Next = points[i+1].before.point2.x + " " + points[i+1].before.point2.y,
             middlePoint1 = (points[i].after.point1.x+points[i].after.point2.x)/2 + " " + (points[i].after.point1.y+points[i].after.point2.y)/2,
             middlePoint2 = (points[i+1].before.point1.x+points[i+1].before.point2.x)/2 + " " + (points[i+1].before.point1.y+points[i+1].before.point2.y)/2,
-            this_size = self.childs[i].options.size;
+            this_size = self.childs[i].options.size,
+            rotate_flag = (points[i].after.point1.x === points[i+1].before.point1.x)?true:(points[i].after.point1.y === points[i+1].before.point1.y)?false:undefined;
 
           self.circles.push(self.g.path("M " + point1 + 
-            " A " + self.radiusBig + " " + self.radiusBig + (custom?((this_size<=0.5)?" 0, 0, 1 ":" 0, 1, 1 "):" 0, 0, 1 ") + point1Next + 
+            " A " + ((custom && this_size===0.5)?( rotate_flag?((self.radiusBig-self.options.spacing/2) + " " + self.radiusBig):rotate_flag===false?(self.radiusBig + " " + (self.radiusBig-self.options.spacing/2)):(self.radiusBig + " " + self.radiusBig)):(self.radiusBig + " " + self.radiusBig)) + (custom?((this_size<=0.5)?" 0, 0, 1 ":" 0, 1, 1 "):" 0, 0, 1 ") + point1Next + 
             " L " + point2Next + 
-            " A " + self.radiusSmall + " " + self.radiusSmall + (custom?((this_size<=0.5)?" 0, 0, 0 ":" 0, 1, 0 "):" 0, 0, 0 ") + point2 + " Z")
+            " A " + ((custom && this_size===0.5)?( rotate_flag?((self.radiusSmall-self.options.spacing/2) + " " + self.radiusSmall):rotate_flag===false?(self.radiusSmall + " " + (self.radiusSmall-self.options.spacing/2)):(self.radiusSmall + " " + self.radiusSmall)):(self.radiusSmall + " " + self.radiusSmall)) + (custom?((this_size<=0.5)?" 0, 0, 0 ":" 0, 1, 0 "):" 0, 0, 0 ") + point2 + " Z")
           .attr({
             "strokeWidth": self.options["stroke"],
             "stroke": self.childs[i].options["stroke-color"],
