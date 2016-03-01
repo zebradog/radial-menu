@@ -140,8 +140,6 @@
     this.defaults = {
       "stroke": 1, //stroke width around every menu item, in pixels
       "spacing": 10, //amount of space between menu items
-      "x": 0, //x location of the center of the menu
-      "y": 0, //y location of the center of the menu
       "opacity": 1, //opacity of the main menu
       "size": null, //if set to a float value 0-1, attempt to allow the section to take that percent of the circle. if null, size is automatically calculated by
       "font-size": 14, //font size of this item, in pixels
@@ -179,8 +177,6 @@
       this.body = document.querySelector("body");
       this.xmlns = "http://www.w3.org/2000/svg";
       this.svg = document.createElementNS (this.xmlns, "svg");
-      // get svg from ID
-      // this.svg = document.getElementById("menu-svg");
 
       // radialMenu SVG elements
       this.s = Snap(this.svg);
@@ -249,10 +245,10 @@
               el.closeChildren();
             }
           });
-          if (!this.parent.isOpened) {    
+          if (!this.parent.isOpened) {
             this.parent.open();
           }
-          
+
           this.buildChildren();
           this.parent.removeActive();
           this.parent.addActive(getIndex(this, this.parent.childs));
@@ -262,10 +258,7 @@
 
     /** creating SVG element and paste it to body */
     buildSvg: function () {
-      this.svg.setAttributeNS (null, "width", "100%");
-      this.svg.setAttributeNS (null, "height", "100%");
-      this.svg.setAttribute("style", "position: absolute; left: 0; top: 0;");
-
+      this.svg.setAttribute("style", "position: absolute; left:50%; top:50%; margin:0;");
       this.mainGroup.attr("opacity", this.options.opacity);
       // this.mainGroup.transform("0");
       this.body.insertBefore(this.svg, this.body.firstChild);
@@ -278,8 +271,8 @@
         self = this,
         childs_length,
         matrix = new Snap.Matrix(),
-        x_center = this.options.x,
-        y_center = this.options.y,
+        x_center = 0,
+        y_center = 0,
         custom = checkSize(this.childs);
 
       // add flag means menu is opened
@@ -303,9 +296,9 @@
             this_size = self.childs[i].options.size,
             rotate_flag = (points[i].after.point1.x === points[i+1].before.point1.x)?true:(points[i].after.point1.y === points[i+1].before.point1.y)?false:undefined;
 
-          self.circles.push(self.g.path("M " + point1 + 
-            " A " + ((custom && this_size===0.5)?( rotate_flag?((self.radiusBig-self.options.spacing/2) + " " + self.radiusBig):rotate_flag===false?(self.radiusBig + " " + (self.radiusBig-self.options.spacing/2)):(self.radiusBig + " " + self.radiusBig)):(self.radiusBig + " " + self.radiusBig)) + (custom?((this_size<=0.5)?" 0, 0, 1 ":" 0, 1, 1 "):" 0, 0, 1 ") + point1Next + 
-            " L " + point2Next + 
+          self.circles.push(self.g.path("M " + point1 +
+            " A " + ((custom && this_size===0.5)?( rotate_flag?((self.radiusBig-self.options.spacing/2) + " " + self.radiusBig):rotate_flag===false?(self.radiusBig + " " + (self.radiusBig-self.options.spacing/2)):(self.radiusBig + " " + self.radiusBig)):(self.radiusBig + " " + self.radiusBig)) + (custom?((this_size<=0.5)?" 0, 0, 1 ":" 0, 1, 1 "):" 0, 0, 1 ") + point1Next +
+            " L " + point2Next +
             " A " + ((custom && this_size===0.5)?( rotate_flag?((self.radiusSmall-self.options.spacing/2) + " " + self.radiusSmall):rotate_flag===false?(self.radiusSmall + " " + (self.radiusSmall-self.options.spacing/2)):(self.radiusSmall + " " + self.radiusSmall)):(self.radiusSmall + " " + self.radiusSmall)) + (custom?((this_size<=0.5)?" 0, 0, 0 ":" 0, 1, 0 "):" 0, 0, 0 ") + point2 + " Z")
           .attr({
             "strokeWidth": self.options["stroke"],
@@ -323,7 +316,7 @@
               self.childs[i].open(i);
             }
           }));
-          
+
           if (points[i].after.point1.x <= points[i+1].before.point1.x) {
             self.texts.push(self.g.text(0, 0, self.childs[i].label).attr({
               "textpath": "M " + middlePoint1 + " A " + (self.radiusBig+self.radiusSmall)/2 + " " + (self.radiusBig+self.radiusSmall)/2 + (custom?((this_size<=0.5)?" 0, 0, 1 ":" 0, 1, 1 "):" 0, 0, 1 ") + middlePoint2
@@ -405,13 +398,13 @@
           "stroke": self.childs[index].options["stroke-color"],
           "stroke-opacity": self.childs[index].options["stroke-opacity"],
           "fill": self.childs[index].options["fill"],
-          "fill-opacity": self.childs[index].options["fill-opacity"]    
+          "fill-opacity": self.childs[index].options["fill-opacity"]
         });
       });
 
       this.texts.forEach(function (el, index) {
         el.attr({
-          "fill": self.childs[index].options["font-color"]   
+          "fill": self.childs[index].options["font-color"]
         });
       });
     },
@@ -422,7 +415,7 @@
         "stroke": this.childs[index].options["active-stroke-color"],
         "stroke-opacity": this.childs[index].options["active-stroke-opacity"],
         "fill": this.childs[index].options["active-fill"],
-        "fill-opacity": this.childs[index].options["active-fill-opacity"]  
+        "fill-opacity": this.childs[index].options["active-fill-opacity"]
       });
 
       this.texts[index].attr({
@@ -432,23 +425,54 @@
 
     /** animating each circle in */
     addAnimationIn: function () {
-      var group = this.g;
 
-      this.g
-        .attr({opacity: 0})
-        .transform("r0," + this.g.getBBox().x + ',' + this.g.getBBox().y + "s0.5, 0.5," + this.g.getBBox().cx + "," + this.g.getBBox().cy);
+      if(this.childs.length){
 
-      this.g.animate({ 
-        transform: "r0," + this.g.getBBox().x + ',' + this.g.getBBox().y + "s1,1," + this.g.getBBox().cx + "," + this.g.getBBox().cy,
-        opacity: 1
-      } , 300, mina.easeout);
+        var group = this.g;
+        var bbox = group.getBBox();
+        var width = bbox.width;
+        var height = bbox.height;
+        var x = bbox.x;
+        var y = bbox.y;
+        var cx = bbox.cx;
+        var cy = bbox.cy;
+        var cw = this.svg.getAttribute('width');
+        cw = cw ? parseInt(cw) : 0;
+        var ch = this.svg.getAttribute('height');
+        ch = ch ? parseInt(ch) : 0;
+
+        if(cw < width && ch < height){
+          this.svg.setAttributeNS (null, "width", width+"px");
+          this.svg.setAttributeNS (null, "data-left", this.svg.style.left);
+          this.svg.style.marginLeft =  (-width / 2)+'px';
+
+          this.svg.setAttributeNS (null, "height", height+"px");
+          this.svg.setAttributeNS (null, "data-top", this.svg.style.top);
+          this.svg.style.marginTop =  (-height / 2)+'px';
+
+          this.mainGroup.transform('t'+width/2+','+height/2);
+        }
+
+        this.g
+          .attr({
+            opacity: 0
+          })
+          .transform("r0," + x + ',' + y + "s0.5, 0.5," + cx + "," + cy);
+
+        this.g.animate({
+          transform: "r0," + x + ',' + y + "s1,1," + cx + "," + cy,
+          opacity: 1
+        } , 300, mina.easeout);
+
+      }
+
     },
 
     /** animating each circle out. Callback - close next level circle */
     addAnimationOut: function () {
       var self = this;
 
-      this.g.animate({ 
+      this.g.animate({
         transform: "r0," + this.g.getBBox().x + ',' + this.g.getBBox().y + "s0.8, 0.8," + this.g.getBBox().cx + "," + this.g.getBBox().cy,
         opacity: 0
       } , 60, mina.easeout, function () {
