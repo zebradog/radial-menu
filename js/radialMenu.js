@@ -36,7 +36,7 @@
       if (counter === 0) {
         return false;
       } else {
-        return counter.toFixed(1);
+        return counter.toFixed(2);
       }
     }
   }
